@@ -38,10 +38,19 @@ tap.test("GET /tasks", async (t) => {
 });
 
 tap.test("GET /tasks/:id", async (t) => {
-  const response = await server.get("/tasks/1");
+  // Create the expected task first
+  const taskToCreate = {
+    title: "Set up environment",
+    description: "Install Node.js, npm, and git",
+    completed: true,
+  };
+  const createResponse = await server.post("/tasks").send(taskToCreate);
+  const taskId = createResponse.body.id;
+  
+  const response = await server.get(`/tasks/${taskId}`);
   t.equal(response.status, 200);
   const expectedTask = {
-    id: 1,
+    id: taskId,
     title: "Set up environment",
     description: "Install Node.js, npm, and git",
     completed: true,
